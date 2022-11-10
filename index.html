@@ -1,0 +1,82 @@
+<!--Proyecto realizado por: José A. Rodríguez López-->
+<!--Fecha: 06/11/2022-->
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD XML</title>
+    <link rel="stylesheet" href="./css/estilos.css">
+    <script src="./js/index.js" defer></script>
+</head>
+
+<body>
+    <!--Encabezado de la página web-->
+    <header class="cabecera">
+        <div id="titulo">
+            <div class="imagen"><img id="img1" src="./images/Horario.png" alt="Horario.png" title="Horario"></div>
+            <div id="tit_principal">
+                <h1>GESTI&Oacute;N DE HORARIOS</h1>
+            </div>
+            <div class="imagen"><img id="img2" src="./images/Horario.png" alt="Horario.png" .jpg" title="Horario"></div>
+        </div>
+        <div id="controles">
+            <nav>
+                <input type="button" id="bReiniciar" name="bReiniciar" value="Reiniciar horario">
+            </nav>
+        </div>
+    </header>
+
+    <div id="div_principal">
+        <main>
+            <!--Contenedor datos-->
+
+            <div id="datos">
+                <h2>INTRODUZCA DATOS</h2>
+                <label for="iProfesor">Profesor:</label>
+                <input type="text" id="iProfesor" name="iProfesor" value="">
+                <br>
+                <label for="iAsignatura">Asignatura:</label>
+                <input type="text" id="iAsignatura" name="iAsignatura" value="">
+                <br>
+                <label for="iDiaSemana">D&iacute;a de la semana:</label>
+                <select id="iDiaSemana" name="iDiaSemana">
+                    <option value="1">Lunes</option>
+                    <option value="2">Martes</option>
+                    <option value="3">Mi&eacute;rcoles</option>
+                    <option value="4">Jueves</option>
+                    <option value="5">Viernes</option>
+                </select>
+                <br>
+                <label for="iHora">Hora:</label>
+                <select id="iHora" name="iHora">
+                    <option value="1">8</option>
+                    <option value="2">9</option>
+                    <option value="3">10</option>
+                    <option value="4">11:30</option>
+                    <option value="5">12:30</option>
+                </select>
+                <br>
+                <div id="grabar">
+                    <input type="button" id="bGrabar" name="bGrabar" value="Grabar">
+                </div>
+            </div>
+        </main>
+        <!--Contenedor tabla-->
+        <div id="div_tabla">
+            <table id="tabla">
+            </table>
+        </div>
+
+        <!--Pie de página-->
+        <footer>
+            <p>Desarrollo de aplicaciones Web(DAW) &copy; CIFP Santa Catalina</p>
+            <p>Realizado por: José A. Rodríguez López.</p>
+        </footer>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,154 @@
+/* Proyecto realizado por: José A. Rodríguez López-->
+ * Fecha: 10/10/2022
+ */
+body {
+  box-sizing: border-box;
+}
+
+.cabecera {
+  margin: 10px;
+}
+
+#titulo {
+  display: flex;
+  flex-direction: row;
+  font-size: larger;
+  background-color: #bea925;
+  padding: 15px 0px;
+}
+
+#titulo .imagen {
+  width: 25%;
+  padding: 15px auto;
+  margin: 0;
+}
+
+.imagen img {
+  display: flex;
+  width: 100px;
+}
+
+#titulo #img1 {
+  float: right;
+}
+
+#titulo #img2 {
+  float: left;
+}
+
+#tit_principal {
+  width: 50%;
+  text-decoration: underline;
+  text-align: center;
+  margin: 0px;
+  top: 50%;
+}
+
+#div_principal {
+  margin: 15px 10px 0 10px;
+}
+
+main {
+  box-sizing: border-box;
+  background: #2596be;
+  width: 100%;
+  margin: 0 0 15px 0;
+  padding: 0 30px 20px 30px;
+  display: flex;
+}
+
+footer {
+  width: 100%;
+  margin-top: 20px;
+  text-align: center;
+  font-size: 15px;
+  font-style: italic;
+  border-top: solid 1px #6c25be;
+}
+
+input,
+label,
+select {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+label,h2
+{
+  color: white;
+}
+
+h2{
+    text-align: center;
+    margin:15px;
+}
+
+main input,
+select {
+  margin: 10px 10px;
+}
+
+#controles {
+  height: auto;
+  background-color: #6c25be;
+}
+
+nav {
+  text-align: center;
+}
+
+nav input {
+  margin: 20px auto;
+  text-align: center;
+  color:red;
+  font-size: 20px;
+  font-weight: bold;
+  width: auto;
+  height: 30px;
+  box-shadow: 2px 2px 2px 1px #2596be;
+}
+
+#tabla {
+  margin-top:20px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #6c25be;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#tabla th {
+  box-sizing: border-box;
+  text-align: center;
+  padding: 5px;
+  background-color: #bea925;
+  border: 1px solid black;
+}
+
+#tabla td {
+  box-sizing: border-box;
+  padding: 8px;
+  background-color: #87dbfa;
+  border: 1px solid black;
+  width: 150px;
+  text-align: center;
+}
+
+#datos{
+ margin-left: auto;
+ margin-right:auto;
+}
+
+#grabar{
+    text-align: center;
+}
+
+#bGrabar{
+    color:red;
+    width:100px;
+    box-shadow: 2px 2px 2px 1px #6c25be;
+}
+
+#iProfesor{
+    width:258px;
+}
