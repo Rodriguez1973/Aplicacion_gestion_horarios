@@ -6,6 +6,8 @@ Fecha: 06/11/2022
 let horarioMap = new Map() //Map con los datos del horario.
 const profesores = ['Marian', 'Fernando', 'David', 'Alvaro'] //Declaración de los profesores.
 const asignaturas = ['DWES', 'DWEC', 'DI', 'DAW'] //Declaración de las asignaturas.
+let profesorValidado=false //Flag que controla que el profesor está validado.
+let asignaturaValidada=false //Flag que controla que la asignatura está validada.
 
 window.onload = () => {
   dibujarTabla()
@@ -26,59 +28,62 @@ bReiniciar.addEventListener('click', reiniciarHorario, false) //Se produce al ha
 bGrabar.addEventListener('click', grabarDatos, false) //Se produce al hacer click sobre el botón bReiniciar.
 iProfesor.addEventListener('blur', validaProfesor, false) //Se produce cuando iProfesor pierde el foco.
 iAsignatura.addEventListener('blur', validaAsignatura, false) //Se produce cuando iAsignatura pierde el foco.
-iProfesor.addEventListener('focus', borrarProfesor, false) //Se produce cuando iProfesor toma el foco.
-iAsignatura.addEventListener('focus', borrarAsignatura, false) //Se produce cuando iAsignatura toma el foco.
+iProfesor.addEventListener('focus', seleccionarProfesor, false) //Se produce cuando iProfesor toma el foco.
+iAsignatura.addEventListener('focus', seleccionarAsignatura, false) //Se produce cuando iAsignatura toma el foco.
 
 //--------------------------------------------------------------------------------------------------
 //Función que valida un profesor.
-function validaProfesor(evt) {
+function validaProfesor() {
   let profesor = iProfesor.value.trim()
   //Si se ha producido la perdida del foco y la cadena está vacía no la debe validar.
-  if (evt.type == 'blur' && profesor === '') {
-    return false
+  if (profesor === '') {
+    profesorValidado=false;
     //En el resto de casos valida la cadena.
   } else {
     profesor = profesor.toLowerCase().capitalize()
     //Comprueba si está incluido en el array de profesores.
     if (profesores.includes(profesor)) {
-      return true
+      profesorValidado=true;
+      validaAsignatura()
     } else {
       //No se encuentra incluido
-      iProfesor.value = 'Profesor incorrecto.'
+      iProfesor.value = 'Profesor no válido.'
       iProfesor.style.color = 'red'
-      return false
+      profesorValidado=false
     }
   }
 }
 
 //--------------------------------------------------------------------------------------------------
 //Función que valida una asignatura.
-function validaAsignatura(evt) {
+function validaAsignatura() {
   let asignatura = iAsignatura.value.trim()
   //Si se ha producido la perdida del foco y la cadena está vacía no la debe validar.
-  if (evt.type == 'blur' && asignatura === '') {
-    return false
+  if (asignatura === '') {
+    asignaturaValidada=false;
     //En el resto de casos valida la cadena.
   } else {
     asignatura = asignatura.toUpperCase()
     //Comprueba si está incluida en el array de asignaturas.
     if (asignaturas.includes(asignatura)) {
       let profesor = iProfesor.value.trim().toLowerCase().capitalize()
-      if (validaProfesor(evt)) {
-        //Si los indices coinciden la asignatura es de ese profesor.
+      if (profesores.includes(profesor)) {
+        //Si los indices coinciden la asignatura es de ese profesor. Valida la asignatura adjunta al profesor.
         if (asignaturas.indexOf(asignatura) === profesores.indexOf(profesor)) {
-          return true
-        } else {
-          iAsignatura.value = 'El profesor no corresponde.'
+          asignaturaValidada=true
+        }else{
+          iAsignatura.value = 'Asignatura no válida.'
           iAsignatura.style.color = 'red'
-          return false
+          asignaturaValidada=false
         }
+      }else{
+      //No valida la asignatura porque no es adjunta al profesor.
+        asignaturaValidada=false
       }
-      return true
     } else {
-      iAsignatura.value = 'Asignatura incorrecta.'
+      iAsignatura.value = 'Asignatura no válida.'
       iAsignatura.style.color = 'red'
-      return false
+      asignaturaValidada=false
     }
   }
 }
@@ -101,16 +106,16 @@ String.prototype.capitalize = function () {
 }
 
 //--------------------------------------------------------------------------------------------------
-//Función que borra el contenido del iProfesor y cambia a negro la fuente.
-function borrarProfesor() {
-  iProfesor.value = ''
+//Función que selecciona todo el contenido de iProfesor y cambia a negro la fuente.
+function seleccionarProfesor() {
+  iProfesor.select()
   iProfesor.style.color = 'black'
 }
 
 //--------------------------------------------------------------------------------------------------
-//Función que borra el contenido del iAsignatura y cambia a negro la fuente.
-function borrarAsignatura() {
-  iAsignatura.value = ''
+//Función que selecciona todo el contenido de iAsignatura y cambia a negro la fuente.
+function seleccionarAsignatura() {
+  iAsignatura.select()
   iAsignatura.style.color = 'black'
 }
 
@@ -129,18 +134,17 @@ class HorarioAsignatura {
 //Función que reinicia los datos de la tabla.
 function reiniciarHorario() {
   horarioMap.clear
-  iProfesor.value = ''
-  iAsignatura.value = ''
-  iDiaSemana.value = 1
-  iHora.value = 1
+  reiniciarCampos()
   dibujarTabla()
 }
 
 //--------------------------------------------------------------------------------------------------
 //Función que graba los datos.
 function grabarDatos(evt) {
-  //Atención: & simple, tiene que ejecutar las dos funciones para el marcado como incorrecto.
-  if (validaProfesor(evt) & validaAsignatura(evt)) {
+  asignaturaValidada=false
+  validaAsignatura()
+  //Si la asignatura y el profesor son válidos, asignatura estará validada
+  if (asignaturaValidada) {
     //Crea un nuevo horario de una asignatura
     let hProfAsig = new HorarioAsignatura(
       iProfesor.value.trim().toLowerCase().capitalize(),
@@ -155,7 +159,8 @@ function grabarDatos(evt) {
     horarioMap.set(key, hProfAsig) //Añade al map.
     celda = document.getElementById(key) //Obtenemos la celda por el id
     celda.innerText = hProfAsig.asignatura //Introduce la asignatura.
-    crearOyenteClick(key) //Crea el oyente del click para esa celda
+    crearOyenteClick(key) //Crea el oyente del click para esa celda.
+    reiniciarCampos()
   }
 }
 
@@ -220,4 +225,13 @@ function mostrarDatos(evt) {
   iAsignatura.value = horario.asignatura
   iDiaSemana.value = horario.diaSemana
   iHora.value = horario.hora
+}
+
+//--------------------------------------------------------------------------------------------------
+function reiniciarCampos(){
+  iProfesor.value = ''
+  iAsignatura.value = ''
+  iDiaSemana.value = 1
+  iHora.value = 1
+  iProfesor.select()
 }
