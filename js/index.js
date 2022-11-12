@@ -4,11 +4,11 @@ Fecha: 06/11/2022
 //--------------------------------------------------------------------------------------------------
 // Declaraciones.
 let horarioMap = new Map() //Map con los datos del horario.
-const profesores = ['Marian', 'Alvaro', 'Fernando', 'David'] //Declaración de los profesores.
+const profesores = ['Marian', 'Fernando', 'David', 'Alvaro'] //Declaración de los profesores.
 const asignaturas = ['DWES', 'DWEC', 'DI', 'DAW'] //Declaración de las asignaturas.
 
 window.onload = () => {
-  dibujarTabla();
+  dibujarTabla()
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -32,17 +32,18 @@ iAsignatura.addEventListener('focus', borrarAsignatura, false) //Se produce cuan
 //--------------------------------------------------------------------------------------------------
 //Función que valida un profesor.
 function validaProfesor(evt) {
+  let profesor = iProfesor.value.trim()
   //Si se ha producido la perdida del foco y la cadena está vacía no la debe validar.
-  if (evt.type == 'blur' && iProfesor.value.trim() === '') {
+  if (evt.type == 'blur' && profesor === '') {
     return false
     //En el resto de casos valida la cadena.
   } else {
-    let profesor = iProfesor.value.trim().toLowerCase()
-    profesor = profesor.trim()
-    profesor = profesor.capitalize()
+    profesor = profesor.toLowerCase().capitalize()
+    //Comprueba si está incluido en el array de profesores.
     if (profesores.includes(profesor)) {
       return true
     } else {
+      //No se encuentra incluido
       iProfesor.value = 'Profesor incorrecto.'
       iProfesor.style.color = 'red'
       return false
@@ -53,13 +54,26 @@ function validaProfesor(evt) {
 //--------------------------------------------------------------------------------------------------
 //Función que valida una asignatura.
 function validaAsignatura(evt) {
+  let asignatura = iAsignatura.value.trim()
   //Si se ha producido la perdida del foco y la cadena está vacía no la debe validar.
-  if (evt.type == 'blur' && iAsignatura.value.trim() === '') {
+  if (evt.type == 'blur' && asignatura === '') {
     return false
     //En el resto de casos valida la cadena.
   } else {
-    let asignatura = iAsignatura.value.trim().toUpperCase()
+    asignatura = asignatura.toUpperCase()
+    //Comprueba si está incluida en el array de asignaturas.
     if (asignaturas.includes(asignatura)) {
+      let profesor = iProfesor.value.trim().toLowerCase().capitalize()
+      if (validaProfesor(evt)) {
+        //Si los indices coinciden la asignatura es de ese profesor.
+        if (asignaturas.indexOf(asignatura) === profesores.indexOf(profesor)) {
+          return true
+        } else {
+          iAsignatura.value = 'El profesor no corresponde.'
+          iAsignatura.style.color = 'red'
+          return false
+        }
+      }
       return true
     } else {
       iAsignatura.value = 'Asignatura incorrecta.'
@@ -100,7 +114,6 @@ function borrarAsignatura() {
   iAsignatura.style.color = 'black'
 }
 
-
 //--------------------------------------------------------------------------------------------------
 //Clase HorarioAsignatura.
 class HorarioAsignatura {
@@ -115,13 +128,13 @@ class HorarioAsignatura {
 //--------------------------------------------------------------------------------------------------
 //Función que reinicia los datos de la tabla.
 function reiniciarHorario() {
-  horarioMap.clear;
-  iProfesor.value=""
-  iAsignatura.value=""
-  iDiaSemana.value=1
-  iHora.value=1
+  horarioMap.clear
+  iProfesor.value = ''
+  iAsignatura.value = ''
+  iDiaSemana.value = 1
+  iHora.value = 1
   dibujarTabla()
- }
+}
 
 //--------------------------------------------------------------------------------------------------
 //Función que graba los datos.
@@ -130,52 +143,63 @@ function grabarDatos(evt) {
   if (validaProfesor(evt) & validaAsignatura(evt)) {
     //Crea un nuevo horario de una asignatura
     let hProfAsig = new HorarioAsignatura(
-      iProfesor.value,
-      iAsignatura.value,
+      iProfesor.value.trim().toLowerCase().capitalize(),
+      iAsignatura.value.trim().toUpperCase(),
       iDiaSemana.value,
       iHora.value,
     )
 
     //Crear key.
-    let key='c'+iHora.value+iDiaSemana.value
-    console.log(key)
-    horarioMap.set (key, hProfAsig);
-    celda=document.getElementById(key)
-    celda.innerText=hProfAsig.asignatura;
-    crearOyenteClick(key)
+    let key = 'c' + iHora.value + iDiaSemana.value
+    //console.log(key) //Clave de la celda y el map. Utilizado en depuración.
+    horarioMap.set(key, hProfAsig) //Añade al map.
+    celda = document.getElementById(key) //Obtenemos la celda por el id
+    celda.innerText = hProfAsig.asignatura //Introduce la asignatura.
+    crearOyenteClick(key) //Crea el oyente del click para esa celda
   }
 }
 
 //--------------------------------------------------------------------------------------------------
 //Función que dibuja la tabla.
 function dibujarTabla() {
-  let cuerpoTabla = document.getElementById("tabla")
-  tabla.innerText=""
-  for (let f = 0; f <= iHora.length; f++) {
-    //Crea una fila.
-    let fila = document.createElement("tr")
-    //La añade a la tabla.  
-    cuerpoTabla.appendChild(fila)
+  let cuerpoTabla = document.getElementById('tabla')
+  tabla.innerText = '' //Borra la tabla.
+  let thead = document.createElement('thead') //Se crea encabezado
+  cuerpoTabla.appendChild(thead) //Se añade al cuerpo de la tabla.
+  let trEncabezado = document.createElement('tr') //Se crea una fila.
+  thead.appendChild(trEncabezado) //Se añade la fila al thead.
+  //Bucle que crea los th.
+  for (let c = 0; c <= iDiaSemana.length; c++) {
+    let th = document.createElement('th')
+    trEncabezado.appendChild(th)
+    if (c === 0) {
+      //Si es 0 escribe "Horario"
+      th.innerText = 'Horario'
+    } else {
+      //Si no escribe el día de la semana que corresponde.
+      th.innerText = iDiaSemana[c - 1].innerText
+    }
+  }
+
+  //Creamos el tbody y lo añade al cuerpo de la tabla.
+  let tbody = document.createElement('tbody')
+  cuerpoTabla.appendChild(tbody)
+  //Bucle que genera las filas del cuerpo de la tabla.
+  for (let f = 1; f <= iHora.length; f++) {
+    let tr = document.createElement('tr')
+    tbody.appendChild(tr)
+    //Bucle que genera las celdas.
     for (let c = 0; c <= iDiaSemana.length; c++) {
-      //Primera fila. Elementos <th>
-      if (f === 0) {
-        let celda = document.createElement("th")
-        //Añade el contenido.
-        if (c === 0) {
-          celda.innerText = 'Horario'
-        } else {
-          celda.innerText = iDiaSemana[c - 1].innerText
-        }
-        fila.appendChild(celda)
-      } else {  //No es la primera fila.
-        let celda = document.createElement("td")
-        //Primera columna añade las horas.
-        if (c === 0) {
-          celda.innerText = iHora[f - 1].innerText
-        } else {
-          celda.id = 'c' + f + c
-        }
-        fila.appendChild(celda)
+      let celda = document.createElement('td') //Crea la celda
+      tr.appendChild(celda) //Añade la celda a la fila
+      //Primera columna añade las horas.
+      if (c === 0) {
+        celda.innerText = iHora[f - 1].innerText
+        //Si no es la primera columna añade el id.
+      } else {
+        celda.id = 'c' + f + c
+        //Utilizada en depuración. Muestra el id de cada celda en ella
+        //celda.innerText=celda.id
       }
     }
   }
@@ -184,16 +208,16 @@ function dibujarTabla() {
 //--------------------------------------------------------------------------------------------------
 //Función que crea escuchador del evento click para cada una de las celdas.
 function crearOyenteClick(id) {
-  let celda = document.getElementById(id);
-  celda.addEventListener('click', mostrarDatos, false);
+  let celda = document.getElementById(id)
+  celda.addEventListener('click', mostrarDatos, false)
 }
 
 //--------------------------------------------------------------------------------------------------
-function mostrarDatos(evt){
+function mostrarDatos(evt) {
   console.log(evt.target.id)
-  let horario=horarioMap.get(evt.target.id)
-  iProfesor.value=horario.profesor;
-  iAsignatura.value=horario.asignatura;
-  iDiaSemana.value=horario.diaSemana
-  iHora.value=horario.hora;
+  let horario = horarioMap.get(evt.target.id)
+  iProfesor.value = horario.profesor
+  iAsignatura.value = horario.asignatura
+  iDiaSemana.value = horario.diaSemana
+  iHora.value = horario.hora
 }
