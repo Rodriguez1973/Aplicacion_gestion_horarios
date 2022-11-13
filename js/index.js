@@ -34,7 +34,7 @@ iAsignatura.addEventListener('focus', seleccionarAsignatura, false) //Se produce
 function validaProfesor() {
   let profesor = iProfesor.value.trim()
   //Si se ha producido la perdida del foco y la cadena está vacía, no la debe validar.
-  if (profesor === '' || profesor==="El campo no puede estar vacío.") {
+  if (profesor === '' || profesor === 'El campo no puede estar vacío.') {
     return false
     //En el resto de casos valida la cadena.
   } else {
@@ -56,7 +56,7 @@ function validaProfesor() {
 function validaAsignatura() {
   let asignatura = iAsignatura.value.trim()
   //Si se ha producido la perdida del foco y la cadena está vacía, no la debe validar.
-  if (asignatura === '' || asignatura==="El campo no puede estar vacío") {
+  if (asignatura === '' || asignatura === 'El campo no puede estar vacío') {
     return false
     //En el resto de casos valida la cadena.
   } else {
@@ -130,8 +130,8 @@ function grabarDatos(evt) {
   let asignatura = iAsignatura.value.trim()
   //Si la asignatura y el profesor son válidos.
   if (validaProfesor() && validaAsignatura()) {
-    profesor=profesor.toLowerCase().capitalize()
-    asignatura=asignatura.toUpperCase()
+    profesor = profesor.toLowerCase().capitalize()
+    asignatura = asignatura.toUpperCase()
     //El profesor tiene asignada esa asignatura.
     if (profesores.indexOf(profesor) == asignaturas.indexOf(asignatura)) {
       //Crea un nuevo horario de una asignatura
@@ -148,7 +148,7 @@ function grabarDatos(evt) {
       horarioMap.set(key, hProfAsig) //Añade al map.
       celda = document.getElementById(key) //Obtenemos la celda por el id
       celda.innerText = hProfAsig.asignatura //Introduce la asignatura.
-      crearOyenteClick(key) //Crea el oyente del click para esa celda.
+      //crearOyenteClick(key) //Crea el oyente del click para esa celda. Llamada a la creación del oyente click de la celda en la solución en que solo se muestras los datos si existen datos guardados en la celda.
       reiniciarCampos()
     } else {
       iAsignatura.value =
@@ -200,6 +200,7 @@ function dibujarTabla() {
     for (let c = 0; c <= iDiaSemana.length; c++) {
       let celda = document.createElement('td') //Crea la celda
       tr.appendChild(celda) //Añade la celda a la fila.
+      celda.addEventListener('click', mostrarDatos, false) //Crea el oyente del evento click. Utilizada en la solución que se crea el oyente de la celda para todad las casillas sea cual sea el contenido.
       //Primera columna añade las horas.
       if (c === 0) {
         celda.innerText = iHora[f - 1].innerText
@@ -215,6 +216,7 @@ function dibujarTabla() {
 
 //--------------------------------------------------------------------------------------------------
 //Función que crea oyente del evento click para cada una de las celdas.
+//Función utilizada para la solución en que solo crea el oyente si existen datos en la celda.
 function crearOyenteClick(id) {
   let celda = document.getElementById(id)
   celda.addEventListener('click', mostrarDatos, false)
@@ -223,12 +225,22 @@ function crearOyenteClick(id) {
 //--------------------------------------------------------------------------------------------------
 //Función que muestra los datos de una celda si se hace click en ella.
 function mostrarDatos(evt) {
+  iProfesor.style.color = 'black'
+  iAsignatura.style.color = 'black'
   //console.log(evt.target.id) //Depuración.
   let horario = horarioMap.get(evt.target.id)
-  iProfesor.value = horario.profesor
-  iAsignatura.value = horario.asignatura
-  iDiaSemana.value = horario.diaSemana
-  iHora.value = horario.hora
+  if (horario !== undefined) {
+    iProfesor.value = horario.profesor
+    iAsignatura.value = horario.asignatura
+    iDiaSemana.value = horario.diaSemana
+    iHora.value = horario.hora
+  } else {
+    iProfesor.value = ''
+    iAsignatura.value = ''
+    let idCelda = evt.target.id
+    iHora.value = idCelda.charAt(1)
+    iDiaSemana.value = idCelda.charAt(2)
+  }
 }
 
 //--------------------------------------------------------------------------------------------------
